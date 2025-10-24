@@ -1,0 +1,37 @@
+name: .NET Build & Test (libs)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_SKIP_WORKLOAD_INSTALL: true  # voorkom MAUI/iOS/Android workloads
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      # --- Alleen libraries restoren/bouwen (raak MAUI-app niet aan) ---
+      - name: Restore Core
+        run: dotnet restore ./Grocery.Core/Grocery.Core.csproj
+      - name: Build Core
+        run: dotnet build ./Grocery.Core/Grocery.Core.csproj -c Release --no-restore
+
+      - name: Restore Core.Data
+        run: dotnet restore ./Grocery.Core.Data/Grocery.Core.Data.csproj
+      - name: Build Core.Data
+        run: dotnet build ./Grocery.Core.Data/Grocery.Core.Data.csproj -c Release --no-restore
+
+      # --- Tests ---
+      - name: Restore Tests
+        run: dotnet restore ./TestCore/TestCore.csproj
+      - name: Build Tests
+        run: dotnet build ./TestCore/TestCore.csproj -c Release --no-restore
+      - name: Run Tests
+        run: dotnet test ./TestCore/TestCore.csproj -c Release --no-build --verbosity normal
