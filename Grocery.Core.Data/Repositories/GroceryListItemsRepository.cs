@@ -40,11 +40,11 @@ namespace Grocery.Core.Data.Repositories
                 @"INSERT OR IGNORE INTO GroceryListItem(Id, GroceryListId, ProductId, Amount) VALUES(4, 2, 1, 2)",
                 @"INSERT OR IGNORE INTO GroceryListItem(Id, GroceryListId, ProductId, Amount) VALUES(5, 2, 2, 5)"
             ];
-
+            
             // Voer alle insert queries uit in één keer (dit is sneller en veiliger)
             // Dit is een transaction - als één query faalt, worden ze allemaal teruggedraaid
             InsertMultipleWithTransaction(insertQueries);
-
+            
             // Haal alle items op uit de database zodat ze beschikbaar zijn
             GetAll();
         }
@@ -56,16 +56,16 @@ namespace Grocery.Core.Data.Repositories
         {
             // Maak de lijst eerst leeg, anders krijgen we duplicaten
             groceryListItems.Clear();
-
+            
             // Dit is de SQL query om alle items op te halen
             // SELECT betekent: geef me gegevens terug
             // FROM GroceryListItem betekent: uit de GroceryListItem tabel
             string selectQuery = "SELECT Id, GroceryListId, ProductId, Amount FROM GroceryListItem";
-
+            
             // Open de verbinding met de database
             // Dit moet altijd gebeuren voordat we een query kunnen uitvoeren
             OpenConnection();
-
+            
             // Gebruik een SqliteCommand om de query uit te voeren
             // 'using' zorgt ervoor dat het command automatisch wordt opgeruimd na gebruik
             using (SqliteCommand command = new(selectQuery, Connection))
@@ -86,17 +86,17 @@ namespace Grocery.Core.Data.Repositories
                     int groceryListId = reader.GetInt32(1);
                     int productId = reader.GetInt32(2);
                     int amount = reader.GetInt32(3);
-
+                    
                     // Maak een nieuw GroceryListItem object met deze gegevens
                     // en voeg het toe aan onze lijst
                     groceryListItems.Add(new(id, groceryListId, productId, amount));
                 }
             }
-
+            
             // Sluit de database verbinding weer
             // Dit is belangrijk om de database niet 'vast' te houden
             CloseConnection();
-
+            
             // Geef de lijst met alle items terug
             return groceryListItems;
         }
@@ -109,13 +109,13 @@ namespace Grocery.Core.Data.Repositories
             // Deze query haalt alleen items op waar GroceryListId gelijk is aan de meegegeven id
             // WHERE is een filter: het betekent "alleen rijen die aan deze voorwaarde voldoen"
             string selectQuery = $"SELECT Id, GroceryListId, ProductId, Amount FROM GroceryListItem WHERE GroceryListId = {id}";
-
+            
             // Maak een nieuwe tijdelijke lijst voor de resultaten
             List<GroceryListItem> items = [];
-
+            
             // Open de database verbinding
             OpenConnection();
-
+            
             // Voer de query uit, net zoals bij GetAll()
             using (SqliteCommand command = new(selectQuery, Connection))
             {
@@ -128,15 +128,15 @@ namespace Grocery.Core.Data.Repositories
                     int groceryListId = reader.GetInt32(1);
                     int productId = reader.GetInt32(2);
                     int amount = reader.GetInt32(3);
-
+                    
                     // Voeg elk item toe aan de lijst
                     items.Add(new(itemId, groceryListId, productId, amount));
                 }
             }
-
+            
             // Sluit de verbinding
             CloseConnection();
-
+            
             // Geef alleen de items terug die bij deze boodschappenlijst horen
             return items;
         }
@@ -150,10 +150,10 @@ namespace Grocery.Core.Data.Repositories
             // We gebruiken @GroceryListId, @ProductId, etc. als placeholders
             // RETURNING RowId geeft ons het nieuwe Id terug dat de database heeft aangemaakt
             string insertQuery = $"INSERT INTO GroceryListItem(GroceryListId, ProductId, Amount) VALUES(@GroceryListId, @ProductId, @Amount) RETURNING RowId;";
-
+            
             // Open de database verbinding
             OpenConnection();
-
+            
             using (SqliteCommand command = new(insertQuery, Connection))
             {
                 // Gebruik parameters om SQL injection te voorkomen
@@ -168,10 +168,10 @@ namespace Grocery.Core.Data.Repositories
                 // We slaan dit op in item.Id zodat het item nu zijn database Id heeft
                 item.Id = Convert.ToInt32(command.ExecuteScalar());
             }
-
+            
             // Sluit de verbinding
             CloseConnection();
-
+            
             // Geef het item terug, nu met zijn nieuwe Id
             return item;
         }
@@ -184,17 +184,17 @@ namespace Grocery.Core.Data.Repositories
             // DELETE query om een item te verwijderen op basis van Id
             // WHERE Id = {item.Id} zorgt ervoor dat alleen dit specifieke item wordt verwijderd
             string deleteQuery = $"DELETE FROM GroceryListItem WHERE Id = {item.Id};";
-
+            
             // Open de database verbinding
             OpenConnection();
-
+            
             // ExecuteNonQuery voert een query uit die geen resultaten teruggeeft
             // (zoals DELETE, UPDATE, of INSERT zonder RETURNING)
             Connection.ExecuteNonQuery(deleteQuery);
-
+            
             // Sluit de verbinding
             CloseConnection();
-
+            
             // Geef het verwijderde item terug als bevestiging
             return item;
         }
@@ -207,14 +207,14 @@ namespace Grocery.Core.Data.Repositories
             // Query om één item op te halen op basis van Id
             // WHERE Id = {id} zorgt ervoor dat we alleen het item met dit specifieke Id krijgen
             string selectQuery = $"SELECT Id, GroceryListId, ProductId, Amount FROM GroceryListItem WHERE Id = {id}";
-
+            
             // Deze variabele blijft null als we niks vinden
             // Het vraagteken (?) betekent dat de variabele null kan zijn
             GroceryListItem? groceryListItem = null;
-
+            
             // Open de database verbinding
             OpenConnection();
-
+            
             using (SqliteCommand command = new(selectQuery, Connection))
             {
                 SqliteDataReader reader = command.ExecuteReader();
@@ -227,15 +227,15 @@ namespace Grocery.Core.Data.Repositories
                     int groceryListId = reader.GetInt32(1);
                     int productId = reader.GetInt32(2);
                     int amount = reader.GetInt32(3);
-
+                    
                     // Maak een nieuw GroceryListItem met de gevonden gegevens
                     groceryListItem = new(itemId, groceryListId, productId, amount);
                 }
             }
-
+            
             // Sluit de verbinding
             CloseConnection();
-
+            
             // Geef het item terug (of null als we niks hebben gevonden)
             return groceryListItem;
         }
@@ -249,10 +249,10 @@ namespace Grocery.Core.Data.Repositories
             // SET betekent: verander deze velden naar deze nieuwe waarden
             // WHERE Id = {item.Id} zorgt ervoor dat alleen dit specifieke item wordt gewijzigd
             string updateQuery = $"UPDATE GroceryListItem SET GroceryListId = @GroceryListId, ProductId = @ProductId, Amount = @Amount WHERE Id = {item.Id};";
-
+            
             // Open de database verbinding
             OpenConnection();
-
+            
             using (SqliteCommand command = new(updateQuery, Connection))
             {
                 // Gebruik parameters voor de nieuwe waarden
@@ -265,10 +265,10 @@ namespace Grocery.Core.Data.Repositories
                 // We gebruiken deze waarde niet, maar de query wordt wel uitgevoerd
                 command.ExecuteNonQuery();
             }
-
+            
             // Sluit de verbinding
             CloseConnection();
-
+            
             // Geef het gewijzigde item terug
             return item;
         }

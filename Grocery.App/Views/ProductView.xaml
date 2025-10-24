@@ -4,7 +4,17 @@
              xmlns:vm="clr-namespace:Grocery.App.ViewModels"
              x:Class="Grocery.App.Views.ProductView"
              Title="ProductView">
-    
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- UC19 NIEUW: ToolbarItem voor "Nieuw Product" knop           -->
+    <!-- Deze knop verschijnt rechtsboven in de navigatiebalk        -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Nieuw Product" 
+                     Command="{Binding NavigateToNewProductCommand}" 
+                     IconImageSource="{FontImage Glyph='&#xf067;', Color=Black, Size=22}" />
+    </ContentPage.ToolbarItems>
+
     <Shell.TitleView>
         <Grid>
             <Label Text="Producten" FontSize="Large" HorizontalOptions="Center" VerticalOptions="Center" />

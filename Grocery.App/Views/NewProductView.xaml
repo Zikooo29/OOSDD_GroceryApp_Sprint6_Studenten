@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- UC19 NIEUW: Dit hele bestand is nieuw!                      -->
+<!-- Het invoerscherm voor nieuwe producten                       -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Grocery.App.ViewModels"
+             x:Class="Grocery.App.Views.NewProductView"
+             x:DataType="vm:NewProductViewModel"
+             Title="Nieuw Product Aanmaken">
+
+    <Shell.TitleView>
+        <Grid>
+            <Label Text="Nieuw Product" 
+                   FontSize="Large" 
+                   HorizontalOptions="Center" 
+                   VerticalOptions="Center" />
+        </Grid>
+    </Shell.TitleView>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label Text="Vul de gegevens in om een nieuw product aan te maken:" 
+                   FontSize="16" 
+                   FontAttributes="Bold"
+                   Margin="0,0,0,10"/>
+
+            <!-- UC19: Product Naam invoer -->
+            <Label Text="Product Naam:" 
+                   FontAttributes="Bold"/>
+            <Entry Placeholder="bijv. Appelsap" 
+                   Text="{Binding ProductName}"/>
+
+            <!-- UC19: Voorraad invoer -->
+            <Label Text="Voorraad:" 
+                   FontAttributes="Bold"/>
+            <Entry Placeholder="bijv. 50" 
+                   Keyboard="Numeric"
+                   Text="{Binding Stock}"/>
+
+            <!-- UC19: THT Datum kiezer -->
+            <Label Text="THT Datum (Tenminste Houdbaar Tot):" 
+                   FontAttributes="Bold"/>
+            <DatePicker Date="{Binding ShelfLife}" 
+                        Format="dd-MM-yyyy"
+                        MinimumDate="{Binding Source={x:Static x:DateTime.Now}}"/>
+
+            <!-- UC19: Prijs invoer -->
+            <Label Text="Prijs (€):" 
+                   FontAttributes="Bold"/>
+            <Entry Placeholder="bijv. 2.99" 
+                   Keyboard="Numeric"
+                   Text="{Binding Price, StringFormat='{0:F2}'}"/>
+
+            <Label Text="Let op: Alleen beheerders kunnen nieuwe producten aanmaken." 
+                   FontSize="12"
+                   TextColor="Gray"
+                   Margin="0,10,0,0"/>
+
+            <!-- UC19: Actie knoppen -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,20,0,0">
+
+                <Button Grid.Column="0"
+                        Text="Product Aanmaken" 
+                        Command="{Binding CreateProductCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        FontAttributes="Bold"/>
+
+                <Button Grid.Column="1"
+                        Text="Annuleren" 
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="Gray"
+                        TextColor="White"/>
+            </Grid>
+
+            <!-- UC19: Feedback bericht -->
+            <Label Text="{Binding Message}" 
+                   FontAttributes="Bold"
+                   FontSize="14"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,20,0,0">
+                <Label.Triggers>
+                    <DataTrigger TargetType="Label" 
+                                 Binding="{Binding Message, Converter={StaticResource StringToBoolConverter}, ConverterParameter='Product'}" 
+                                 Value="True">
+                        <Setter Property="TextColor" Value="Green" />
+                    </DataTrigger>
+                    <DataTrigger TargetType="Label" 
+                                 Binding="{Binding Message, Converter={StaticResource StringToBoolConverter}, ConverterParameter='Product'}" 
+                                 Value="False">
+                        <Setter Property="TextColor" Value="Red" />
+                    </DataTrigger>
+                </Label.Triggers>
+            </Label>
+
+            <!-- UC19: Voorbeeld voor gebruiker -->
+            <Frame BorderColor="LightGray" 
+                   Padding="10" 
+                   Margin="0,20,0,0"
+                   BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray600}}">
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Voorbeeld:" 
+                           FontAttributes="Bold" 
+                           FontSize="14"/>
+                    <Label Text="• Naam: Appelsap" 
+                           FontSize="12"/>
+                    <Label Text="• Voorraad: 50" 
+                           FontSize="12"/>
+                    <Label Text="• THT Datum: 31-12-2025" 
+                           FontSize="12"/>
+                    <Label Text="• Prijs: €2.99" 
+                           FontSize="12"/>
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
