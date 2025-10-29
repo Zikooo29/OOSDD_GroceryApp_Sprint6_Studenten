@@ -10,10 +10,8 @@ namespace Grocery.App.Views
             BindingContext = viewModel;
         }
 
-        // ═══════════════════════════════════════════════════════════
-        // UC19 NIEUW: OnAppearing override
+
         // Ververst productlijst als we terugkomen van NewProductView
-        // ═══════════════════════════════════════════════════════════
         protected override void OnAppearing()
         {
             base.OnAppearing();

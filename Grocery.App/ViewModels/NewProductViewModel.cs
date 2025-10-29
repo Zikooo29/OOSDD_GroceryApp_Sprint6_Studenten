@@ -6,16 +6,13 @@ using System.Collections.Generic;
 
 namespace Grocery.App.ViewModels
 {
-    // ═══════════════════════════════════════════════════════════
-    // UC19 NIEUW: Dit hele bestand is nieuw!
-    // ViewModel voor het "Nieuw Product Aanmaken" scherm
-    // ═══════════════════════════════════════════════════════════
+
     public partial class NewProductViewModel : BaseViewModel
     {
         private readonly IProductService _productService;
         private readonly GlobalViewModel _globalViewModel;
 
-        // UC19 NIEUW: Properties voor het formulier
+        //Properties voor het formulier
         [ObservableProperty]
         private string productName = "";
 
@@ -38,21 +35,19 @@ namespace Grocery.App.ViewModels
             Title = "Nieuw Product";
         }
 
-        // ═══════════════════════════════════════════════════════════
-        // UC19 NIEUW: CreateProduct - Maakt nieuw product aan
+
         // Dit wordt aangeroepen als gebruiker op "Product Aanmaken" klikt
-        // ═══════════════════════════════════════════════════════════
         [RelayCommand]
         private async Task CreateProduct()
         {
-            // UC19: Check of gebruiker admin is
+            // Check of gebruiker admin is
             if (_globalViewModel.Client.Role != Role.Admin)
             {
                 Message = "Je hebt geen rechten om producten aan te maken. Alleen admins kunnen dit doen.";
                 return;
             }
 
-            // UC19: Validatie van invoer
+            // Validatie van invoer
             if (string.IsNullOrWhiteSpace(ProductName))
             {
                 Message = "Product naam is verplicht!";
@@ -79,7 +74,7 @@ namespace Grocery.App.ViewModels
 
             try
             {
-                // UC19: Maak nieuw product object
+                // Maak nieuw product object
                 Product newProduct = new Product(
                     id: 0,
                     name: ProductName,
@@ -88,19 +83,19 @@ namespace Grocery.App.ViewModels
                     price: Price
                 );
 
-                // UC19: Sla op in database via service
+                // Sla op in database via service
                 Product addedProduct = _productService.Add(newProduct);
 
-                // UC19: Toon success bericht
+                //Toon success bericht
                 Message = $"Product '{addedProduct.Name}' is succesvol aangemaakt met ID {addedProduct.Id}!";
 
-                // UC19: Maak velden leeg voor nieuw product
+                //Maak velden leeg voor nieuw product
                 ProductName = "";
                 Stock = 0;
                 ShelfLife = DateOnly.FromDateTime(DateTime.Now.AddMonths(1));
                 Price = 0.00m;
 
-                // UC19: Ga terug naar productlijst na 2 seconden
+                //  Ga terug naar productlijst na 2 seconden
                 await Task.Delay(2000);
                 await Shell.Current.GoToAsync("..");
             }
@@ -110,9 +105,8 @@ namespace Grocery.App.ViewModels
             }
         }
 
-        // ═══════════════════════════════════════════════════════════
-        // UC19 NIEUW: Cancel - Annuleer en ga terug
-        // ═══════════════════════════════════════════════════════════
+
+        // Annuleer en ga terug
         [RelayCommand]
         private async Task Cancel()
         {

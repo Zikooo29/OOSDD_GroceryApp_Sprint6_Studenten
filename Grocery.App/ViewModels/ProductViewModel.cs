@@ -10,17 +10,13 @@ namespace Grocery.App.ViewModels
     {
         private readonly IProductService _productService;
 
-        // ═══════════════════════════════════════════════════════════
-        // UC19 NIEUW: GlobalViewModel toegevoegd voor admin check
-        // ═══════════════════════════════════════════════════════════
+
         private readonly GlobalViewModel _globalViewModel;
 
         public ObservableCollection<Product> Products { get; set; }
 
-        // ═══════════════════════════════════════════════════════════
-        // UC19 AANGEPAST: Constructor heeft nu GlobalViewModel parameter
-        // Voorheen: public ProductViewModel(IProductService productService)
-        // ═══════════════════════════════════════════════════════════
+
+        //Constructor heeft nu GlobalViewModel parameter
         public ProductViewModel(IProductService productService, GlobalViewModel globalViewModel)
         {
             _productService = productService;
@@ -33,10 +29,7 @@ namespace Grocery.App.ViewModels
             }
         }
 
-        // ═══════════════════════════════════════════════════════════
-        // UC19 NIEUW: NavigateToNewProduct
         // Wordt aangeroepen als gebruiker op "+" knop drukt
-        // ═══════════════════════════════════════════════════════════
         [RelayCommand]
         private async Task NavigateToNewProduct()
         {
@@ -54,20 +47,16 @@ namespace Grocery.App.ViewModels
             await Shell.Current.GoToAsync(nameof(NewProductView));
         }
 
-        // ═══════════════════════════════════════════════════════════
-        // UC19 NIEUW: OnAppearing override
         // Ververst productlijst als we terugkomen van NewProductView
-        // ═══════════════════════════════════════════════════════════
+
         public override void OnAppearing()
         {
             base.OnAppearing();
             RefreshProducts();
         }
 
-        // ═══════════════════════════════════════════════════════════
-        // UC19 NIEUW: RefreshProducts
+
         // Herlaadt alle producten uit database
-        // ═══════════════════════════════════════════════════════════
         private void RefreshProducts()
         {
             Products.Clear();

@@ -5,10 +5,8 @@
              x:Class="Grocery.App.Views.ProductView"
              Title="ProductView">
 
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <!-- UC19 NIEUW: ToolbarItem voor "Nieuw Product" knop           -->
-    <!-- Deze knop verschijnt rechtsboven in de navigatiebalk        -->
-    <!-- ═══════════════════════════════════════════════════════════ -->
+
+    <!-- Deze knop verschijnt rechtsboven in de navigatiebalk -->
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Nieuw Product" 
                      Command="{Binding NavigateToNewProductCommand}" 
